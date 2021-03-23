@@ -14,14 +14,14 @@ dependencies {
 }
 
 pluginBundle {
-    website = 'https://github.com/rmee/gradle-plugins/tree/master/kubectl'
-    vcsUrl = 'https://github.com/rmee/gradle-plugins/tree/master/kubectl'
+    website = 'https://github.com/devshiro/gradle-plugins/tree/master/kubectl'
+    vcsUrl = 'https://github.com/devshiro/gradle-plugins/tree/master/kubectl'
     description = 'Access to kubectl command line tool from Gradle to manage Kubernetes.'
     tags = ['kubernetes', 'kubectl', 'package']
 
     plugins {
         'kubectl' {
-            id = 'com.github.rmee.kubectl'
+            id = 'com.github.devshiro.kubectl'
             displayName = 'kubectl'
         }
     }
