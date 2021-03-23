@@ -21,7 +21,7 @@ wrapper {
 // note that a production build creates javadoc, sources jars and signatures undesired during development
 // for performance reasons
 final boolean hasPublishSecrets = System.env.GRADLE_PUBLISH_KEY != null && System.env.GRADLE_PUBLISH_SECRET != null;
-final boolean isProductionBuild =  System.getenv("CI_VERSION") != null || hasPublishSecrets
+final boolean isProductionBuild =  System.getenv("CI") != null || hasPublishSecrets
 if (hasPublishSecrets) {
     ext {
         System.setProperty("gradle.publish.key", System.env.GRADLE_PUBLISH_KEY)
@@ -135,6 +135,16 @@ gradle.beforeProject { Project project ->
         apply plugin: 'maven-publish'
 
         publishing {
+            repositories {
+                maven {
+                    name = "GitHubPackages"
+                    url = "https://maven.pkg.github.com/devshiro/gradle-plugins"
+                    credentials {
+                        username = System.getenv("GITHUB_ACTOR")
+                        password = System.getenv("GITHUB_TOKEN")
+                    }
+                }
+            }
             publications {
                 mavenJava(MavenPublication) {
                     from components.java
@@ -164,47 +174,7 @@ gradle.beforeProject { Project project ->
 
         def releaseBuild = project.hasProperty('stable')
 
-
-        apply plugin: 'com.jfrog.bintray'
-        bintray {
-            user = System.env.BINTRAY_USER
-            key = System.env.BINTRAY_TOKEN
-
-            publications = ['mavenJava']
-
-            pkg {
-                repo = releaseBuild ? 'mavenStable' : 'mavenLatest'
-                name = project.name
-                userOrg = 'rmee'
-                licenses = ['Apache-2.0']
-                vcsUrl = 'https://github.com/rmee/gradle-plugins.git'
-                websiteUrl = 'http://www.github.com/rmee/gradle-plugins/'
-                desc = 'Gradle plugins'
-                labels = ['Gradle']
-
-                githubRepo = 'rmee/gradle-plugins'
-                githubReleaseNotesFile = 'README.md'
-
-                publish = !releaseBuild
-
-                version {
-                    name = project.version
-                    desc = 'Gradle plugins'
-                    released = new Date()
-                    vcsTag = "v$project.version"
-
-                    mavenCentralSync {
-                        sync = false
-                    }
-                }
-
-
-            }
-        }
-
-        tasks.bintrayUpload.dependsOn assemble, sourcesJar, javadocJar, publishToMavenLocal
-
-        publish.dependsOn tasks.bintrayUpload
+        publish.dependsOn assemble, sourcesJar, javadocJar, publishToMavenLocal
 
 
     }
