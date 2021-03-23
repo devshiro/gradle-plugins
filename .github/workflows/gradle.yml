@@ -21,6 +21,6 @@ jobs:
       - name: Build
         run: ./gradlew clean build
       - name: Publish
-        run: ./gradlew publish
+        run: ./gradlew publish --max-workers=1 --no-parallel -Pstable=true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
